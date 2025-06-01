@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Teachers</title>
+</head>
+<body>
+  <h2>Teacher Directory</h2>
+  <input type="text" id="search" placeholder="Search by name or location..." />
+  <div id="results"></div>
+
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxZHtXBv38pl0CC4hUNKhXde4R2TVA-lmIiIcMFsvjUfM3cpHH5wMtJ5Yz89g88o2dnGQ/exec'; // 👈 Replace this
+
+    fetch(SHEET_URL)
+      .then(res => res.json())
+      .then(data => {
+        const input = document.getElementById('search');
+        const results = document.getElementById('results');
+
+        function render(query) {
+          const filtered = data.filter(t =>
+            t.Name.toLowerCase().includes(query) ||
+            t.Location.toLowerCase().includes(query)
+          );
+
+          results.innerHTML = filtered.map(t =>
+            `<p><strong>${t.Name}</strong><br/>
+             📍 ${t.Location} | 📞 ${t.Phone}<br/>
+             🎓 ${t.Qualification} | 📘 ${t.Subject}</p>`
+          ).join('');
+        }
+
+        input.addEventListener('input', () => {
+          render(input.value.toLowerCase());
+        });
+
+        render(""); // Show all initially
+      });
+  </script>
+</body>
+</html>
